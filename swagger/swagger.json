@@ -1,0 +1,777 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "WHS-TodoList API",
+    "version": "1.0",
+    "description": "API specification for the WHS-TodoList application. Manages users, todos, and holidays.",
+    "contact": {
+      "name": "WHS-TodoList Team",
+      "email": "contact@whs-todolist.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://your-domain.vercel.app/api",
+      "description": "Production server"
+    },
+    {
+      "url": "http://localhost:3000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "User authentication and session management"
+    },
+    {
+      "name": "Todos",
+      "description": "Operations related to user's to-do items"
+    },
+    {
+      "name": "Trash",
+      "description": "Operations for managing deleted to-do items"
+    },
+    {
+      "name": "Holidays",
+      "description": "Operations for viewing and managing holidays"
+    },
+    {
+      "name": "Users",
+      "description": "User profile management"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register a new user",
+        "operationId": "registerUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Log in a user",
+        "operationId": "loginUser",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Refresh access token",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponse"
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Log out a user",
+        "operationId": "logoutUser",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "로그아웃 되었습니다"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/todos": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Get list of todos",
+        "operationId": "getTodos",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["active", "completed", "deleted"] } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["dueDate", "createdAt"] } },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] } }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of todos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Todo" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Create a new todo",
+        "operationId": "createTodo",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateTodoRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Todo created successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" }
+        }
+      }
+    },
+    "/todos/{id}": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Get a single todo by ID",
+        "operationId": "getTodoById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detailed information for a todo",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Todos"],
+        "summary": "Update an existing todo",
+        "operationId": "updateTodo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateTodoRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Todo updated successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "delete": {
+        "tags": ["Todos"],
+        "summary": "Move a todo to trash (soft delete)",
+        "operationId": "deleteTodo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo moved to trash",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoSoftDeleteResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/todos/{id}/complete": {
+      "patch": {
+        "tags": ["Todos"],
+        "summary": "Mark a todo as complete",
+        "operationId": "completeTodo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo marked as complete",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoStatusResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/todos/{id}/restore": {
+      "patch": {
+        "tags": ["Todos"],
+        "summary": "Restore a todo from trash",
+        "operationId": "restoreTodo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo restored successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/TodoRestoreResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/trash": {
+      "get": {
+        "tags": ["Trash"],
+        "summary": "Get items from trash",
+        "operationId": "getTrashItems",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "A list of deleted todos",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Todo" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/trash/{id}": {
+      "delete": {
+        "tags": ["Trash"],
+        "summary": "Permanently delete a todo",
+        "operationId": "permanentlyDeleteTodo",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Todo permanently deleted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "message": {"type": "string", "example": "할일이 영구적으로 삭제되었습니다"}
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "403": { "$ref": "#/components/responses/Forbidden" },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/holidays": {
+      "get": {
+        "tags": ["Holidays"],
+        "summary": "Get list of holidays",
+        "operationId": "getHolidays",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "year", "in": "query", "schema": { "type": "integer" } },
+          { "name": "month", "in": "query", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of holidays",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean", "example": true},
+                    "data": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/Holiday" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Holidays"],
+        "summary": "Add a new holiday (Admin only)",
+        "operationId": "createHoliday",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateHolidayRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Holiday created successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/HolidayResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/holidays/{id}": {
+      "put": {
+        "tags": ["Holidays"],
+        "summary": "Update a holiday (Admin only)",
+        "operationId": "updateHoliday",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateHolidayRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Holiday updated successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/HolidayResponse" } }
+            }
+          },
+          "403": { "$ref": "#/components/responses/Forbidden" }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get current user's profile",
+        "operationId": "getCurrentUser",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Current user's profile data",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/UserProfileResponse" } }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update current user's profile",
+        "operationId": "updateCurrentUser",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateUserRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User profile updated successfully",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/UserUpdateResponse" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "userId": { "type": "string", "format": "uuid" },
+          "email": { "type": "string", "format": "email" },
+          "username": { "type": "string" },
+          "role": { "type": "string", "enum": ["user", "admin"] }
+        }
+      },
+      "Todo": {
+        "type": "object",
+        "properties": {
+          "todoId": { "type": "string", "format": "uuid" },
+          "userId": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "content": { "type": "string", "nullable": true },
+          "startDate": { "type": "string", "format": "date", "nullable": true },
+          "dueDate": { "type": "string", "format": "date", "nullable": true },
+          "status": { "type": "string", "enum": ["active", "completed", "deleted"] },
+          "isCompleted": { "type": "boolean" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "deletedAt": { "type": "string", "format": "date-time", "nullable": true }
+        }
+      },
+      "Holiday": {
+        "type": "object",
+        "properties": {
+          "holidayId": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "description": { "type": "string", "nullable": true },
+          "isRecurring": { "type": "boolean" }
+        }
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "required": ["email", "password", "username"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "user@example.com" },
+          "password": { "type": "string", "format": "password", "example": "password123" },
+          "username": { "type": "string", "example": "홍길동" }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email", "example": "user@example.com" },
+          "password": { "type": "string", "format": "password", "example": "password123" }
+        }
+      },
+      "RefreshRequest": {
+        "type": "object",
+        "required": ["refreshToken"],
+        "properties": {
+          "refreshToken": { "type": "string" }
+        }
+      },
+      "CreateTodoRequest": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string", "example": "프로젝트 마감" },
+          "content": { "type": "string", "example": "PRD 작성 완료하기" },
+          "startDate": { "type": "string", "format": "date", "example": "2025-11-25" },
+          "dueDate": { "type": "string", "format": "date", "example": "2025-11-28" }
+        }
+      },
+      "UpdateTodoRequest": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "content": { "type": "string", "nullable": true },
+          "startDate": { "type": "string", "format": "date", "nullable": true },
+          "dueDate": { "type": "string", "format": "date", "nullable": true }
+        }
+      },
+      "CreateHolidayRequest": {
+        "type": "object",
+        "required": ["title", "date"],
+        "properties": {
+          "title": { "type": "string", "example": "광복절" },
+          "date": { "type": "string", "format": "date", "example": "2025-08-15" },
+          "description": { "type": "string", "example": "대한민국 독립 기념일" },
+          "isRecurring": { "type": "boolean", "example": true }
+        }
+      },
+      "UpdateHolidayRequest": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "description": { "type": "string" },
+          "isRecurring": { "type": "boolean" }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string", "format": "password" }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": { "$ref": "#/components/schemas/User" }
+        }
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": {
+            "type": "object",
+            "properties": {
+              "accessToken": { "type": "string" },
+              "refreshToken": { "type": "string" },
+              "user": { "$ref": "#/components/schemas/User" }
+            }
+          }
+        }
+      },
+      "RefreshResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": {
+            "type": "object",
+            "properties": {
+              "accessToken": { "type": "string" }
+            }
+          }
+        }
+      },
+      "TodoResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": { "$ref": "#/components/schemas/Todo" }
+        }
+      },
+      "TodoStatusResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": {
+            "type": "object",
+            "properties": {
+              "todoId": { "type": "string", "format": "uuid" },
+              "status": { "type": "string", "example": "completed" },
+              "isCompleted": { "type": "boolean", "example": true }
+            }
+          }
+        }
+      },
+      "TodoSoftDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "message": {"type": "string"},
+          "data": {
+            "type": "object",
+            "properties": {
+              "todoId": { "type": "string", "format": "uuid" },
+              "status": { "type": "string", "example": "deleted" },
+              "deletedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      },
+      "TodoRestoreResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "message": {"type": "string"},
+          "data": {
+            "type": "object",
+            "properties": {
+              "todoId": { "type": "string", "format": "uuid" },
+              "status": { "type": "string", "example": "active" },
+              "deletedAt": { "type": "object", "nullable": true }
+            }
+          }
+        }
+      },
+      "HolidayResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": { "$ref": "#/components/schemas/Holiday" }
+        }
+      },
+      "UserProfileResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": {
+            "type": "object",
+            "properties": {
+              "userId": { "type": "string", "format": "uuid" },
+              "email": { "type": "string", "format": "email" },
+              "username": { "type": "string" },
+              "role": { "type": "string", "enum": ["user", "admin"] },
+              "createdAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      },
+      "UserUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": true},
+          "data": {
+            "type": "object",
+            "properties": {
+              "userId": { "type": "string", "format": "uuid" },
+              "username": { "type": "string" }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "success": {"type": "boolean", "example": false},
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad Request - Invalid input",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized - Invalid or missing token",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Forbidden": {
+        "description": "Forbidden - Insufficient permissions",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "NotFound": {
+        "description": "Not Found - Resource not found",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Conflict": {
+        "description": "Conflict - Resource already exists",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "InternalError": {
+        "description": "Internal Server Error",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Production artifacts
+dist/
+build/
+.next/    # If Next.js is ever used
+out/
+
+# Dependency directories for various package managers
+/package-lock.json
+/yarn.lock
+/pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.envrc
+.terraform.tfvars
+
+# Logs
+logs/
+*.log
+*.log.*
+tmp/
+
+# OS and editor specific files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+.history/
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Vite specific
+.vite/
