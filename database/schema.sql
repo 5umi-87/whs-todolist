@@ -182,7 +182,100 @@ INSERT INTO holidays (title, date, description, is_recurring) VALUES
 ('성탄절', '2025-12-25', '크리스마스', true);
 
 -- ============================================
--- 5. 데이터베이스 확인 쿼리
+-- 5. Row Level Security (RLS) 설정
+-- ============================================
+
+-- --------------------------------------------
+-- 5.1 RLS 활성화
+-- --------------------------------------------
+
+-- users 테이블 RLS 활성화
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- todos 테이블 RLS 활성화
+ALTER TABLE todos ENABLE ROW LEVEL SECURITY;
+
+-- holidays 테이블 RLS 활성화
+ALTER TABLE holidays ENABLE ROW LEVEL SECURITY;
+
+-- --------------------------------------------
+-- 5.2 Users 테이블 RLS 정책
+-- --------------------------------------------
+
+-- 사용자는 자신의 정보만 조회 가능
+CREATE POLICY users_select_policy ON users
+    FOR SELECT
+    USING (user_id = current_setting('app.current_user_id')::UUID);
+
+-- 사용자는 자신의 정보만 수정 가능
+CREATE POLICY users_update_policy ON users
+    FOR UPDATE
+    USING (user_id = current_setting('app.current_user_id')::UUID);
+
+-- 신규 사용자 생성은 모두 허용 (회원가입)
+CREATE POLICY users_insert_policy ON users
+    FOR INSERT
+    WITH CHECK (true);
+
+-- --------------------------------------------
+-- 5.3 Todos 테이블 RLS 정책
+-- --------------------------------------------
+
+-- 사용자는 자신의 할일만 조회 가능
+CREATE POLICY todos_select_policy ON todos
+    FOR SELECT
+    USING (user_id = current_setting('app.current_user_id')::UUID);
+
+-- 사용자는 자신의 할일만 생성 가능
+CREATE POLICY todos_insert_policy ON todos
+    FOR INSERT
+    WITH CHECK (user_id = current_setting('app.current_user_id')::UUID);
+
+-- 사용자는 자신의 할일만 수정 가능
+CREATE POLICY todos_update_policy ON todos
+    FOR UPDATE
+    USING (user_id = current_setting('app.current_user_id')::UUID);
+
+-- 사용자는 자신의 할일만 삭제 가능
+CREATE POLICY todos_delete_policy ON todos
+    FOR DELETE
+    USING (user_id = current_setting('app.current_user_id')::UUID);
+
+-- --------------------------------------------
+-- 5.4 Holidays 테이블 RLS 정책
+-- --------------------------------------------
+
+-- 모든 인증된 사용자가 국경일 조회 가능
+CREATE POLICY holidays_select_policy ON holidays
+    FOR SELECT
+    USING (true);
+
+-- 관리자만 국경일 생성 가능
+CREATE POLICY holidays_insert_policy ON holidays
+    FOR INSERT
+    WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE user_id = current_setting('app.current_user_id')::UUID
+            AND role = 'admin'
+        )
+    );
+
+-- 관리자만 국경일 수정 가능
+CREATE POLICY holidays_update_policy ON holidays
+    FOR UPDATE
+    USING (
+        EXISTS (
+            SELECT 1 FROM users
+            WHERE user_id = current_setting('app.current_user_id')::UUID
+            AND role = 'admin'
+        )
+    );
+
+-- 국경일 삭제는 불가 (요구사항에 따라 삭제 정책 없음)
+
+-- ============================================
+-- 6. 데이터베이스 확인 쿼리
 -- ============================================
 
 -- 테이블 목록 조회
@@ -210,7 +303,7 @@ INSERT INTO holidays (title, date, description, is_recurring) VALUES
 -- WHERE tc.constraint_type = 'FOREIGN KEY';
 
 -- ============================================
--- 6. 스키마 삭제 (개발용)
+-- 7. 스키마 삭제 (개발용)
 -- ============================================
 -- 주의: 모든 데이터가 삭제됩니다!
 -- DROP TABLE IF EXISTS todos CASCADE;
