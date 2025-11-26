@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 
@@ -14,9 +15,25 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    error: {
+      code: 'RATE_LIMIT_EXCEEDED',
+      message: 'Too many requests from this IP, please try again later.'
+    }
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+app.use(limiter);
+
 // Body parser 미들웨어
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Health check 엔드포인트
 app.get('/health', (req, res) => {
@@ -36,6 +53,9 @@ app.get('/api', (req, res) => {
   });
 });
 
+// Import error handler middleware
+const { errorHandler } = require('./middlewares/errorHandler');
+
 // 404 핸들러
 app.use((req, res) => {
   res.status(404).json({
@@ -47,16 +67,7 @@ app.use((req, res) => {
   });
 });
 
-// 에러 핸들러
-app.use((err, req, res, _next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({
-    success: false,
-    error: {
-      code: err.code || 'INTERNAL_ERROR',
-      message: err.message || 'Internal server error',
-    },
-  });
-});
+// 에러 핸들러 - should be the last middleware
+app.use(errorHandler);
 
 module.exports = app;
