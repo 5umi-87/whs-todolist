@@ -9,7 +9,13 @@
       "mcp__postgresql-mcp__pg_manage_triggers",
       "mcp__postgresql-mcp__pg_execute_mutation",
       "mcp__postgresql-mcp__pg_manage_rls",
-      "mcp__postgresql-mcp__pg_execute_query"
+      "mcp__postgresql-mcp__pg_execute_query",
+      "Bash(./create-all-issues.bat)",
+      "Bash(powershell -ExecutionPolicy Bypass -File create-issues.ps1)",
+      "Bash(gh label:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue close:*)"
     ],
     "deny": [],
     "ask": []
