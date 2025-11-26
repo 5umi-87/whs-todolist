@@ -35,6 +35,9 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Import routes
+const authRoutes = require('./routes/auth');
+
 // Health check 엔드포인트
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -52,6 +55,9 @@ app.get('/api', (req, res) => {
     version: '1.0.0',
   });
 });
+
+// Mount routes
+app.use('/api', authRoutes);
 
 // Import error handler middleware
 const { errorHandler } = require('./middlewares/errorHandler');
