@@ -1,30 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuthStore } from '../stores/authStore';
 
-const RegisterPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
-  const { register, isLoading } = useAuthStore();
+// Define validation schema using zod
+const registerSchema = z.object({
+  email: z.string().email('유효한 이메일 주소를 입력해주세요'),
+  username: z.string().min(2, '사용자 이름은 최소 2자 이상이어야 합니다'),
+  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요'),
+})
+// Add custom validation to ensure passwords match
+.refine(data => data.password === data.confirmPassword, {
+  message: "비밀번호가 일치하지 않습니다",
+  path: ["confirmPassword"], // field that error is associated with
+});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    if (password !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다');
-      return;
+const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { register: registerUser, isLoading } = useAuthStore();
+  const [submitError, setSubmitError] = useState('');
+
+  // Initialize react-hook-form with zod resolver
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
     }
-    
-    const result = await register(email, password, username);
+  });
+
+  const onSubmit = async (data) => {
+    setSubmitError('');
+
+    const result = await registerUser(data.email, data.password, data.username);
     if (result.success) {
       navigate('/login');
     } else {
-      setError(result.error);
+      setSubmitError(result.error);
+      setError('root', { message: result.error });
     }
   };
 
@@ -39,14 +62,16 @@ const RegisterPage = () => {
             회원가입
           </p>
         </div>
-        
-        {error && (
+
+        {(submitError || errors.root) && (
           <div className="rounded-md bg-red-50 dark:bg-red-900 p-4">
-            <div className="text-sm text-red-700 dark:text-red-200">{error}</div>
+            <div className="text-sm text-red-700 dark:text-red-200">
+              {submitError || errors.root?.message}
+            </div>
           </div>
         )}
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -57,12 +82,19 @@ const RegisterPage = () => {
                 name="email"
                 type="email"
                 autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('email')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.email
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.email ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="이메일"
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <label htmlFor="username" className="sr-only">
@@ -72,12 +104,19 @@ const RegisterPage = () => {
                 id="username"
                 name="username"
                 type="text"
-                required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('username')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.username
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.username ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="사용자 이름"
               />
+              {errors.username && (
+                <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+              )}
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
@@ -88,12 +127,19 @@ const RegisterPage = () => {
                 name="password"
                 type="password"
                 autoComplete="new-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('password')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.password
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.password ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="비밀번호 (최소 8자)"
               />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
             </div>
             <div>
               <label htmlFor="confirmPassword" className="sr-only">
@@ -104,12 +150,19 @@ const RegisterPage = () => {
                 name="confirmPassword"
                 type="password"
                 autoComplete="new-password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('confirmPassword')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.confirmPassword
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.confirmPassword ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="비밀번호 확인"
               />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
+              )}
             </div>
           </div>
 
@@ -122,7 +175,7 @@ const RegisterPage = () => {
               {isLoading ? '회원가입 중...' : '회원가입'}
             </button>
           </div>
-          
+
           <div className="text-center text-sm text-gray-600 dark:text-gray-300">
             이미 계정이 있으신가요?{' '}
             <Link to="/login" className="font-medium text-primary-main hover:text-primary-dark">
