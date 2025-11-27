@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react';
 import { useAuthStore } from '../../stores/authStore';
+import { useUiStore } from '../../stores/uiStore';
 import Header from './Header';
 
 const MainLayout = ({ children }) => {
   const { checkAuth } = useAuthStore();
+  const { initializeDarkMode } = useUiStore();
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+    initializeDarkMode();
+  }, [checkAuth, initializeDarkMode]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">

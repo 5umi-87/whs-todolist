@@ -2,11 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('../../swagger/swagger.json');
 
 const app = express();
 
-// 보안 미들웨어
-app.use(helmet());
+// 보안 미들웨어 (Swagger UI 경로는 CSP 예외 처리)
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api-docs')) {
+    return next();
+  }
+  helmet()(req, res, next);
+});
 
 // CORS 설정
 const corsOptions = {
@@ -49,6 +56,9 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Swagger UI 설정
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // API 기본 라우트
 app.get('/api', (req, res) => {

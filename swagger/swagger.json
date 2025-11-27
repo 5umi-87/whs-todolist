@@ -329,6 +329,11 @@
         "summary": "Get items from trash",
         "operationId": "getTrashItems",
         "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search by title or content" },
+          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["deletedAt", "dueDate", "createdAt"] }, "description": "Sort by field" },
+          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] }, "description": "Sort order" }
+        ],
         "responses": {
           "200": {
             "description": "A list of deleted todos",

@@ -15,7 +15,11 @@
       "Bash(gh label:*)",
       "Bash(gh issue list:*)",
       "Bash(gh issue create:*)",
-      "Bash(gh issue close:*)"
+      "Bash(gh issue close:*)",
+      "Bash(npm install:*)",
+      "Bash(psql:*)",
+      "Bash(where:*)",
+      "Bash(node scripts/generate-admin-hash.js:*)"
     ],
     "deny": [],
     "ask": []
