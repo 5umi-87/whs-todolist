@@ -1,23 +1,44 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { useAuthStore } from '../stores/authStore';
 
+// Define validation schema using zod
+const loginSchema = z.object({
+  email: z.string().email('유효한 이메일 주소를 입력해주세요'),
+  password: z.string().min(1, '비밀번호를 입력해주세요'),
+});
+
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login, isLoading } = useAuthStore();
+  const [submitError, setSubmitError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    const result = await login(email, password);
+  // Initialize react-hook-form with zod resolver
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setError
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    }
+  });
+
+  const onSubmit = async (data) => {
+    setSubmitError('');
+
+    const result = await login(data.email, data.password);
     if (result.success) {
       navigate('/');
     } else {
-      setError(result.error);
+      setSubmitError(result.error);
+      setError('root', { message: result.error });
     }
   };
 
@@ -32,14 +53,16 @@ const LoginPage = () => {
             로그인
           </p>
         </div>
-        
-        {error && (
+
+        {(submitError || errors.root) && (
           <div className="rounded-md bg-red-50 dark:bg-red-900 p-4">
-            <div className="text-sm text-red-700 dark:text-red-200">{error}</div>
+            <div className="text-sm text-red-700 dark:text-red-200">
+              {submitError || errors.root?.message}
+            </div>
           </div>
         )}
-        
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -50,12 +73,19 @@ const LoginPage = () => {
                 name="email"
                 type="email"
                 autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('email')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.email
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.email ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="이메일"
               />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              )}
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
@@ -66,12 +96,19 @@ const LoginPage = () => {
                 name="password"
                 type="password"
                 autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800"
+                {...register('password')}
+                className={`appearance-none rounded-none relative block w-full px-3 py-2 border ${
+                  errors.password
+                    ? 'border-red-300'
+                    : 'border-gray-300 dark:border-gray-600'
+                } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
+                  errors.password ? 'focus:ring-red-500 focus:border-red-500' : ''
+                }`}
                 placeholder="비밀번호"
               />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              )}
             </div>
           </div>
 
@@ -84,7 +121,7 @@ const LoginPage = () => {
               {isLoading ? '로그인 중...' : '로그인'}
             </button>
           </div>
-          
+
           <div className="text-center text-sm text-gray-600 dark:text-gray-300">
             계정이 없으신가요?{' '}
             <Link to="/register" className="font-medium text-primary-main hover:text-primary-dark">
