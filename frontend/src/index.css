@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+}
+
+/* 다크모드 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1A1A1A;
+    color: #E5E5E5;
+  }
+}
+
+/* 다크모드 클래스 기반 스타일 */
+.dark {
+  background-color: #1A1A1A;
+  color: #E5E5E5;
+}
+
+/* 포커스 스타일 */
+.focus-visible {
+  outline: 2px solid #1A73E8;
+  outline-offset: 2px;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* 다크모드 스크롤바 */
+.dark ::-webkit-scrollbar-track {
+  background: #333333;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #555555;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #777777;
+}
