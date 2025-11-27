@@ -138,18 +138,64 @@ if (process.env.NODE_ENV === 'test') {
       };
     },
 
+    // Get all deleted todos for a user (trash items)
+    findDeletedTodosByUserId: async (userId) => {
+      const filteredTodos = mockTodos.filter(todo => todo.user_id === userId && todo.status === 'deleted');
+
+      return filteredTodos.map(todo => ({
+        todoId: todo.todo_id,
+        userId: todo.user_id,
+        title: todo.title,
+        content: todo.content,
+        startDate: todo.start_date,
+        dueDate: todo.due_date,
+        status: todo.status,
+        isCompleted: todo.is_completed,
+        createdAt: todo.created_at,
+        updatedAt: todo.updated_at,
+        deletedAt: todo.deleted_at
+      }));
+    },
+
+    // Permanently delete a todo from the database
+    permanentlyDeleteTodo: async (todoId) => {
+      const todoIndex = mockTodos.findIndex(todo => todo.todo_id === todoId);
+      if (todoIndex === -1) return null;
+
+      // Find and return the todo before removing it
+      const todoToRemove = mockTodos[todoIndex];
+      const removedTodo = { ...todoToRemove };
+
+      // Remove the todo from the array
+      mockTodos.splice(todoIndex, 1);
+
+      return {
+        todoId: removedTodo.todo_id,
+        userId: removedTodo.user_id,
+        title: removedTodo.title,
+        content: removedTodo.content,
+        startDate: removedTodo.start_date,
+        dueDate: removedTodo.due_date,
+        status: removedTodo.status,
+        isCompleted: removedTodo.is_completed,
+        createdAt: removedTodo.created_at,
+        updatedAt: removedTodo.updated_at,
+        deletedAt: removedTodo.deleted_at
+      };
+    },
+
     restoreTodo: async (todoId) => {
       const todoIndex = mockTodos.findIndex(todo => todo.todo_id === todoId);
       if (todoIndex === -1) return null;
-      
+
       const restoredTodo = {
         ...mockTodos[todoIndex],
         status: 'active',
         deleted_at: null
       };
-      
+
       mockTodos[todoIndex] = restoredTodo;
-      
+
       return {
         todoId: restoredTodo.todo_id,
         userId: restoredTodo.user_id,
@@ -315,21 +361,66 @@ if (process.env.NODE_ENV === 'test') {
       };
     },
 
+    // Get all deleted todos for a user (trash items)
+    findDeletedTodosByUserId: async (userId) => {
+      const query = `SELECT todo_id, user_id, title, content, start_date, due_date, status, is_completed, created_at, updated_at, deleted_at FROM todos WHERE user_id = $1 AND status = 'deleted' ORDER BY deleted_at DESC`;
+      const result = await pool.query(query, [userId]);
+
+      return result.rows.map(todo => ({
+        todoId: todo.todo_id,
+        userId: todo.user_id,
+        title: todo.title,
+        content: todo.content,
+        startDate: todo.start_date,
+        dueDate: todo.due_date,
+        status: todo.status,
+        isCompleted: todo.is_completed,
+        createdAt: todo.created_at,
+        updatedAt: todo.updated_at,
+        deletedAt: todo.deleted_at
+      }));
+    },
+
+    // Permanently delete a todo from the database
+    permanentlyDeleteTodo: async (todoId) => {
+      const query = `DELETE FROM todos WHERE todo_id = $1 RETURNING todo_id, user_id, title, content, start_date, due_date, status, is_completed, created_at, updated_at, deleted_at`;
+
+      const result = await pool.query(query, [todoId]);
+
+      if (result.rows.length === 0) return null;
+
+      const deletedTodo = result.rows[0];
+
+      return {
+        todoId: deletedTodo.todo_id,
+        userId: deletedTodo.user_id,
+        title: deletedTodo.title,
+        content: deletedTodo.content,
+        startDate: deletedTodo.start_date,
+        dueDate: deletedTodo.due_date,
+        status: deletedTodo.status,
+        isCompleted: deletedTodo.is_completed,
+        createdAt: deletedTodo.created_at,
+        updatedAt: deletedTodo.updated_at,
+        deletedAt: deletedTodo.deleted_at
+      };
+    },
+
     restoreTodo: async (todoId) => {
       const query = `
         UPDATE todos
         SET status = 'active', deleted_at = NULL
         WHERE todo_id = $1
-        RETURNING todo_id, user_id, title, content, start_date, due_date, 
+        RETURNING todo_id, user_id, title, content, start_date, due_date,
                  status, is_completed, created_at, updated_at, deleted_at
       `;
-      
+
       const result = await pool.query(query, [todoId]);
-      
+
       if (result.rows.length === 0) return null;
-      
+
       const restoredTodo = result.rows[0];
-      
+
       return {
         todoId: restoredTodo.todo_id,
         userId: restoredTodo.user_id,

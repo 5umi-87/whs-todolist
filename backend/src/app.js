@@ -38,6 +38,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Import routes
 const authRoutes = require('./routes/auth');
 const todoRoutes = require('./routes/todos');
+const trashRoutes = require('./routes/trash');
 
 // Health check 엔드포인트
 app.get('/health', (req, res) => {
@@ -61,6 +62,8 @@ app.get('/api', (req, res) => {
 app.use('/api', authRoutes);
 // Todo routes mounted at /api/todos to handle paths like /api/todos, /api/todos/:id
 app.use('/api/todos', todoRoutes);
+// Trash routes mounted at /api/trash to handle paths like /api/trash, /api/trash/:id
+app.use('/api/trash', trashRoutes);
 
 // Import error handler middleware
 const { errorHandler } = require('./middlewares/errorHandler');
