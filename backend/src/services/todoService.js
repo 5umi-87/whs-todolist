@@ -168,10 +168,13 @@ const restoreTodo = async (todoId, userId) => {
 /**
  * Gets all deleted todos for a specific user (trash items)
  * @param {string} userId - User ID
+ * @param {Object} queryOptions - Options for filtering, sorting
  * @returns {Promise<Array>} List of deleted todos
  */
-const getTrashItems = async (userId) => {
-  return await todoRepository.findDeletedTodosByUserId(userId);
+const getTrashItems = async (userId, queryOptions = {}) => {
+  const { search, sortBy = 'deletedAt', order = 'desc' } = queryOptions;
+
+  return await todoRepository.findDeletedTodosByUserId(userId, search, sortBy, order);
 };
 
 /**

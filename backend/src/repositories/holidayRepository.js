@@ -124,6 +124,18 @@ if (process.env.NODE_ENV === 'test') {
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
   });
 
+  // Helper function to format DATE fields as YYYY-MM-DD
+  const formatDate = (date) => {
+    if (!date) return null;
+    if (typeof date === 'string') return date;
+    // Convert Date object to YYYY-MM-DD format in UTC time
+    const d = new Date(date);
+    const year = d.getUTCFullYear();
+    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(d.getUTCDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   module.exports = {
     getHolidays: async (filters = {}) => {
       let query = 'SELECT holiday_id, title, date, description, is_recurring, created_at, updated_at FROM holidays';
@@ -154,7 +166,7 @@ if (process.env.NODE_ENV === 'test') {
       return result.rows.map(holiday => ({
         holidayId: holiday.holiday_id,
         title: holiday.title,
-        date: holiday.date,
+        date: formatDate(holiday.date),
         description: holiday.description,
         isRecurring: holiday.is_recurring,
         createdAt: holiday.created_at,
@@ -177,7 +189,7 @@ if (process.env.NODE_ENV === 'test') {
       return {
         holidayId: holiday.holiday_id,
         title: holiday.title,
-        date: holiday.date,
+        date: formatDate(holiday.date),
         description: holiday.description,
         isRecurring: holiday.is_recurring,
         createdAt: holiday.created_at,
@@ -196,7 +208,7 @@ if (process.env.NODE_ENV === 'test') {
       return {
         holidayId: holiday.holiday_id,
         title: holiday.title,
-        date: holiday.date,
+        date: formatDate(holiday.date),
         description: holiday.description,
         isRecurring: holiday.is_recurring,
         createdAt: holiday.created_at,
@@ -259,7 +271,7 @@ if (process.env.NODE_ENV === 'test') {
       return {
         holidayId: updatedHoliday.holiday_id,
         title: updatedHoliday.title,
-        date: updatedHoliday.date,
+        date: formatDate(updatedHoliday.date),
         description: updatedHoliday.description,
         isRecurring: updatedHoliday.is_recurring,
         createdAt: updatedHoliday.created_at,

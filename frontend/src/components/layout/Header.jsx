@@ -1,18 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Moon, Sun, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../../stores/authStore';
+import { useUiStore } from '../../stores/uiStore';
 
 const Header = () => {
   const { user, logout } = useAuthStore();
+  const { darkMode, toggleDarkMode, initializeDarkMode } = useUiStore();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-    document.documentElement.classList.toggle('dark');
-  };
+  useEffect(() => {
+    initializeDarkMode();
+  }, [initializeDarkMode]);
 
   const handleLogout = () => {
     logout();
@@ -32,7 +32,7 @@ const Header = () => {
             <Link to="/" className="flex-shrink-0 flex items-center">
               <span className="text-primary-main font-bold text-xl">WHS-TodoList</span>
             </Link>
-            
+
             {/* Desktop Navigation */}
             <nav className="ml-10 hidden md:flex space-x-8">
               <Link to="/" className="text-gray-700 dark:text-gray-200 hover:text-primary-main dark:hover:text-primary-light px-1 pt-1 font-medium">
@@ -53,15 +53,15 @@ const Header = () => {
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-full text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none"
-              aria-label={isDarkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              aria-label={darkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}
             >
-              {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
 
             {/* User Menu */}
             {user && (
               <div className="ml-4 relative">
-                <button 
+                <button
                   className="flex items-center text-sm rounded-full focus:outline-none"
                   id="user-menu-button"
                   aria-expanded="false"

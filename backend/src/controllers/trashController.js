@@ -9,7 +9,14 @@ const getTrashItems = async (req, res) => {
   try {
     const userId = req.user.userId; // Extracted from auth middleware
 
-    const trashItems = await todoService.getTrashItems(userId);
+    // Parse query parameters
+    const { search, sortBy, order } = req.query;
+
+    const trashItems = await todoService.getTrashItems(userId, {
+      search,
+      sortBy,
+      order
+    });
 
     res.status(200).json({
       success: true,
