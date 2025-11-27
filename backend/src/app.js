@@ -37,6 +37,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const todoRoutes = require('./routes/todos');
 
 // Health check 엔드포인트
 app.get('/health', (req, res) => {
@@ -56,8 +57,10 @@ app.get('/api', (req, res) => {
   });
 });
 
-// Mount routes
+// Mount routes - authRoutes already includes full path (e.g. /api/auth/*, /api/users/*)
 app.use('/api', authRoutes);
+// Todo routes mounted at /api/todos to handle paths like /api/todos, /api/todos/:id
+app.use('/api/todos', todoRoutes);
 
 // Import error handler middleware
 const { errorHandler } = require('./middlewares/errorHandler');
