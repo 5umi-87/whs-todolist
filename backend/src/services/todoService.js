@@ -148,21 +148,56 @@ const deleteTodo = async (todoId, userId) => {
 const restoreTodo = async (todoId, userId) => {
   // First get the existing todo to verify ownership
   const existingTodo = await todoRepository.findTodoById(todoId);
-  
+
   if (!existingTodo) {
     throw new Error('TODO_NOT_FOUND');
   }
-  
+
   if (existingTodo.userId !== userId) {
     throw new Error('FORBIDDEN');
   }
-  
+
   // Only allow restoring if the todo is currently deleted
   if (existingTodo.status !== 'deleted') {
     throw new Error('TODO_NOT_DELETED');
   }
-  
+
   return await todoRepository.restoreTodo(todoId);
+};
+
+/**
+ * Gets all deleted todos for a specific user (trash items)
+ * @param {string} userId - User ID
+ * @returns {Promise<Array>} List of deleted todos
+ */
+const getTrashItems = async (userId) => {
+  return await todoRepository.findDeletedTodosByUserId(userId);
+};
+
+/**
+ * Permanently deletes a todo from the database
+ * @param {string} todoId - Todo ID to permanently delete
+ * @param {string} userId - User ID (to verify ownership)
+ * @returns {Promise<Object>} Permanently deleted todo object
+ */
+const permanentlyDeleteTodo = async (todoId, userId) => {
+  // First get the existing todo to verify ownership and status
+  const existingTodo = await todoRepository.findTodoById(todoId);
+
+  if (!existingTodo) {
+    throw new Error('TODO_NOT_FOUND');
+  }
+
+  if (existingTodo.userId !== userId) {
+    throw new Error('FORBIDDEN');
+  }
+
+  // Only allow permanent deletion if the todo is currently deleted (in trash)
+  if (existingTodo.status !== 'deleted') {
+    throw new Error('TODO_NOT_DELETED');
+  }
+
+  return await todoRepository.permanentlyDeleteTodo(todoId);
 };
 
 module.exports = {
@@ -173,4 +208,6 @@ module.exports = {
   completeTodo,
   deleteTodo,
   restoreTodo,
+  getTrashItems,
+  permanentlyDeleteTodo,
 };
