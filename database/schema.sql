@@ -38,7 +38,7 @@ COMMENT ON COLUMN users.user_id IS '사용자 고유 ID';
 COMMENT ON COLUMN users.email IS '로그인 이메일 (고유)';
 COMMENT ON COLUMN users.password IS 'bcrypt 해시된 비밀번호';
 COMMENT ON COLUMN users.username IS '사용자 이름';
-COMMENT ON COLUMN users.role IS '사용자 역할 (user, admin)';
+COMMENT ON COLUMN users.role IS '사용자 역할 (user, admin) - VARCHAR(20) 타입 사용';
 COMMENT ON COLUMN users.created_at IS '가입일시';
 COMMENT ON COLUMN users.updated_at IS '최종 수정일시';
 
@@ -73,7 +73,7 @@ COMMENT ON COLUMN todos.title IS '할일 제목 (필수)';
 COMMENT ON COLUMN todos.content IS '할일 상세 내용';
 COMMENT ON COLUMN todos.start_date IS '시작일';
 COMMENT ON COLUMN todos.due_date IS '만료일';
-COMMENT ON COLUMN todos.status IS '할일 상태 (active, completed, deleted)';
+COMMENT ON COLUMN todos.status IS '할일 상태 (active, completed, deleted) - VARCHAR(20) 타입 사용';
 COMMENT ON COLUMN todos.is_completed IS '완료 여부';
 COMMENT ON COLUMN todos.created_at IS '생성일시';
 COMMENT ON COLUMN todos.updated_at IS '최종 수정일시';

@@ -28,7 +28,7 @@ erDiagram
         varchar email UK "UNIQUE, NOT NULL"
         varchar password "NOT NULL"
         varchar username "NOT NULL"
-        enum role "DEFAULT 'user'"
+        varchar role "DEFAULT 'user', NOT NULL"
         timestamp createdAt "NOT NULL"
         timestamp updatedAt "NOT NULL"
     }
@@ -40,8 +40,8 @@ erDiagram
         text content "NULL"
         date startDate "NULL"
         date dueDate "NULL"
-        enum status "DEFAULT 'active'"
-        boolean isCompleted "DEFAULT false"
+        varchar status "DEFAULT 'active', NOT NULL"
+        boolean isCompleted "DEFAULT false, NOT NULL"
         timestamp createdAt "NOT NULL"
         timestamp updatedAt "NOT NULL"
         timestamp deletedAt "NULL"
@@ -70,7 +70,7 @@ erDiagram
 | email | VARCHAR(255) | UNIQUE, NOT NULL | 로그인 이메일 |
 | password | VARCHAR(255) | NOT NULL | bcrypt 해시된 비밀번호 |
 | username | VARCHAR(100) | NOT NULL | 사용자 이름 |
-| role | ENUM('user', 'admin') | NOT NULL, DEFAULT 'user' | 사용자 역할 |
+| role | VARCHAR(20) | NOT NULL, DEFAULT 'user' | 사용자 역할 |
 | createdAt | TIMESTAMP | NOT NULL | 가입일시 |
 | updatedAt | TIMESTAMP | NOT NULL | 최종 수정일시 |
 
@@ -96,7 +96,7 @@ erDiagram
 | content | TEXT | NULL | 할일 상세 내용 |
 | startDate | DATE | NULL | 시작일 |
 | dueDate | DATE | NULL | 만료일 |
-| status | ENUM('active', 'completed', 'deleted') | NOT NULL, DEFAULT 'active' | 할일 상태 |
+| status | VARCHAR(20) | NOT NULL, DEFAULT 'active' | 할일 상태 |
 | isCompleted | BOOLEAN | NOT NULL, DEFAULT false | 완료 여부 |
 | createdAt | TIMESTAMP | NOT NULL | 생성일시 |
 | updatedAt | TIMESTAMP | NOT NULL | 최종 수정일시 |

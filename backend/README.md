@@ -2,7 +2,7 @@
 
 백엔드 API 서버 for WHS-TodoList 애플리케이션
 
-## 기술 스택
+## 기술스택
 
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
@@ -50,6 +50,7 @@ cp .env.example .env
 ```
 
 필수 환경 변수:
+
 - `PORT`: 서버 포트 (기본: 3000)
 - `DATABASE_URL`: PostgreSQL 연결 문자열
 - `JWT_SECRET`: JWT 서명 키 (최소 32자)
@@ -58,11 +59,13 @@ cp .env.example .env
 ### 3. 서버 실행
 
 #### 개발 모드 (nodemon 자동 재시작)
+
 ```bash
 npm run dev
 ```
 
 #### 프로덕션 모드
+
 ```bash
 npm start
 ```
@@ -76,14 +79,14 @@ npm start
 
 ## 개발 스크립트
 
-| 스크립트 | 설명 |
-|---------|------|
-| `npm start` | 프로덕션 서버 실행 |
-| `npm run dev` | 개발 서버 실행 (nodemon) |
-| `npm run lint` | ESLint 코드 검사 |
-| `npm run lint:fix` | ESLint 자동 수정 |
-| `npm run format` | Prettier 포맷팅 |
-| `npm run format:check` | Prettier 검증 |
+| 스크립트               | 설명                     |
+| ---------------------- | ------------------------ |
+| `npm start`            | 프로덕션 서버 실행       |
+| `npm run dev`          | 개발 서버 실행 (nodemon) |
+| `npm run lint`         | ESLint 코드 검사         |
+| `npm run lint:fix`     | ESLint 자동 수정         |
+| `npm run format`       | Prettier 포맷팅          |
+| `npm run format:check` | Prettier 검증            |
 
 ## API 명세
 
