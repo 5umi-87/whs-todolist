@@ -43,6 +43,7 @@ const register = async (req, res) => {
       });
     }
     
+    console.error('Registration error:', error);
     res.status(500).json({
       success: false,
       error: {

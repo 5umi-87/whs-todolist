@@ -1,0 +1,93 @@
+{
+  "common": {
+    "whsTodolist": "WHS-TodoList",
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirm": "Confirm Password",
+    "username": "Username",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "complete": "Complete",
+    "incomplete": "Incomplete",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "login": {
+    "title": "Login",
+    "emailPlaceholder": "Email",
+    "passwordPlaceholder": "Password",
+    "loginButton": "Login",
+    "logining": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "registerLink": "Register",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "passwordRequired": "Please enter your password"
+    }
+  },
+  "register": {
+    "title": "Register",
+    "emailPlaceholder": "Email",
+    "usernamePlaceholder": "Username",
+    "passwordPlaceholder": "Password (at least 8 characters)",
+    "passwordConfirmPlaceholder": "Confirm Password",
+    "registerButton": "Register",
+    "registering": "Registering...",
+    "hasAccount": "Already have an account?",
+    "loginLink": "Login",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address",
+      "usernameMinLength": "Username must be at least 2 characters",
+      "passwordMinLength": "Password must be at least 8 characters",
+      "passwordConfirmRequired": "Please confirm your password",
+      "passwordMismatch": "Passwords do not match"
+    }
+  },
+  "todoList": {
+    "pageTitle": "My Todo List",
+    "addTodo": "Add Todo",
+    "filters": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "searchPlaceholder": "Search todos",
+    "sortBy": "Sort by:",
+    "sortOptions": {
+      "dueDate": "Due Date",
+      "createdAt": "Created At"
+    },
+    "noTodos": {
+      "title": "No todos",
+      "description": "Add your first task!"
+    },
+    "form": {
+      "title": "Add Todo",
+      "editTitle": "Edit Todo",
+      "titleLabel": "Title *",
+      "titleLabelPlaceholder": "Enter todo title",
+      "contentLabel": "Content",
+      "contentPlaceholder": "Enter todo content (optional)",
+      "startDateLabel": "Start Date",
+      "dueDateLabel": "Due Date"
+    }
+  },
+  "header": {
+    "todos": "Todos",
+    "trash": "Trash",
+    "holidays": "Holidays",
+    "toggleDarkMode": "Switch to dark mode",
+    "toggleLightMode": "Switch to light mode"
+  },
+  "todoCard": {
+    "dueDate": "Due Date",
+    "startDate": "Start Date"
+  },
+  "date": {
+    "startDate": "Start Date",
+    "dueDate": "Due Date",
+    "dateFromTo": "~"
+  }
+}

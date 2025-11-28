@@ -7,7 +7,7 @@ import { useAuthStore } from '../stores/authStore';
 
 // Define validation schema using zod
 const loginSchema = z.object({
-  email: z.string().email('유효한 이메일 주소를 입력해주세요'),
+  email: z.string().email('올바른 이메일 형식이 아닙니다'),
   password: z.string().min(1, '비밀번호를 입력해주세요'),
 });
 
@@ -81,7 +81,7 @@ const LoginPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.email ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="이메일"
+                placeholder="이메일을 입력하세요"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -104,7 +104,7 @@ const LoginPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.password ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="비밀번호"
+                placeholder="비밀번호를 입력하세요"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>

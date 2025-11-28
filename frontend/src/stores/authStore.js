@@ -9,34 +9,56 @@ const useAuthStore = create((set) => ({
 
   login: async (email, password) => {
     set({ isLoading: true });
-    try {
-      const response = await axiosInstance.post('/auth/login', {
-        email,
-        password
-      });
-      
-      const { data } = response;
-      const { accessToken, refreshToken, user } = data.data;
 
-      // Store tokens in localStorage for now (in a real app, consider httpOnly cookies for refresh token)
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+    // Retry mechanism for rate limiting
+    const maxRetries = 3;
+    let retryCount = 0;
 
-      set({
-        user,
-        token: accessToken,
-        isAuthenticated: true,
-        isLoading: false
-      });
+    while (retryCount <= maxRetries) {
+      try {
+        const response = await axiosInstance.post('/auth/login', {
+          email,
+          password
+        });
 
-      return { success: true, user };
-    } catch (error) {
-      set({ isLoading: false });
-      return { 
-        success: false, 
-        error: error.response?.data?.error?.message || '로그인에 실패했습니다' 
-      };
+        const { data } = response;
+        const { accessToken, refreshToken, user } = data.data;
+
+        // Store tokens in localStorage for now (in a real app, consider httpOnly cookies for refresh token)
+        localStorage.setItem('accessToken', accessToken);
+        localStorage.setItem('refreshToken', refreshToken);
+
+        set({
+          user,
+          token: accessToken,
+          isAuthenticated: true,
+          isLoading: false
+        });
+
+        return { success: true, user };
+      } catch (error) {
+        // Check if it's a rate limit error (429)
+        if (error.response?.status === 429 && retryCount < maxRetries) {
+          // Calculate delay with exponential backoff (1s, 2s, 4s)
+          const delay = Math.pow(2, retryCount) * 1000;
+          await new Promise(resolve => setTimeout(resolve, delay));
+          retryCount++;
+        } else {
+          set({ isLoading: false });
+          return {
+            success: false,
+            error: error.response?.data?.error?.message || '로그인에 실패했습니다'
+          };
+        }
+      }
     }
+
+    // If retries are exhausted
+    set({ isLoading: false });
+    return {
+      success: false,
+      error: '로그인 시도 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.'
+    };
   },
 
   register: async (email, password, username) => {

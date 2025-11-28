@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LucideIcon } from 'lucide-react';
 
 const Button = ({ 
   children, 
@@ -16,26 +15,29 @@ const Button = ({
   type = 'button',
   ...props 
 }) => {
-  // Define button styles based on variant and size
+  // Define button styles based on variant and size (구글 캘린더 스타일)
   const variantStyles = {
-    primary: 'bg-primary-main hover:bg-primary-dark text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:bg-gray-400',
-    secondary: 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:bg-gray-100',
-    icon: 'bg-transparent hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:hover:bg-transparent',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:bg-red-300',
-    success: 'bg-green-600 hover:bg-green-700 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-green-300'
+    primary: 'bg-primary-main hover:bg-primary-dark text-text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-active-blue disabled:bg-text-disabled',
+    secondary: 'bg-transparent border border-border-gray dark:border-gray-600 text-text-primary dark:text-dark-text hover:bg-hover-gray dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-active-blue disabled:bg-background-gray',
+    icon: 'bg-transparent hover:bg-hover-gray dark:hover:bg-gray-700 text-text-primary dark:text-dark-text rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-active-blue disabled:hover:bg-transparent',
+    danger: 'bg-status-overdue hover:bg-red-700 text-text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-status-overdue disabled:bg-red-300',
+    success: 'bg-status-completed hover:bg-green-700 text-text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-status-completed disabled:bg-green-300'
   };
 
   const sizeStyles = {
-    sm: 'text-xs py-1.5 px-3',
-    md: 'text-sm py-2 px-4',
-    lg: 'text-base py-2.5 px-5'
+    sm: 'text-xs py-1.5 px-4',
+    md: 'text-sm py-2 px-6',
+    lg: 'text-base py-2.5 px-6'
   };
 
   const widthClass = fullWidth ? 'w-full' : '';
   const loadingClass = loading ? 'opacity-75 cursor-not-allowed' : '';
   const disabledClass = disabled ? 'opacity-50 cursor-not-allowed' : '';
 
-  const buttonClasses = `inline-flex items-center justify-center font-medium rounded-md border border-transparent shadow-sm ${variantStyles[variant]} ${sizeStyles[size]} ${widthClass} ${disabledClass} ${loadingClass} ${className}`;
+  // 구글 캘린더 스타일: primary는 둥근 모서리 (24px), 나머지는 작은 둥근 모서리
+  const roundedClass = variant === 'primary' ? 'rounded-3xl' : 'rounded';
+
+  const buttonClasses = `inline-flex items-center justify-center font-medium ${roundedClass} border-transparent transition-colors ${variantStyles[variant]} ${sizeStyles[size]} ${widthClass} ${disabledClass} ${loadingClass} ${className}`;
 
   return (
     <button

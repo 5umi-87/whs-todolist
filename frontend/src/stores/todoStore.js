@@ -24,6 +24,25 @@ const useTodoStore = create((set, get) => ({
     }
   },
 
+  fetchAllTodos: async () => {
+    set({ loading: true, error: null });
+    try {
+      // Fetch all non-deleted todos (active and completed)
+      const response = await axiosInstance.get('/todos');
+      const { data } = response;
+
+      set({
+        todos: data.data,
+        loading: false
+      });
+    } catch (error) {
+      set({
+        error: error.response?.data?.error?.message || '할일 목록을 불러오는데 실패했습니다',
+        loading: false
+      });
+    }
+  },
+
   createTodo: async (todoData) => {
     set({ loading: true });
     try {
