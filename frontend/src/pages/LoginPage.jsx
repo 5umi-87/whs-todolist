@@ -21,16 +21,16 @@ const LoginPage = () => {
     register,
     handleSubmit,
     formState: { errors },
-    setError
+    setError,
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
-    }
+    },
   });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async data => {
     setSubmitError('');
 
     const result = await login(data.email, data.password);
@@ -47,7 +47,7 @@ const LoginPage = () => {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            WHS-TodoList
+            할일 관리 앱
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-300">
             로그인
@@ -84,7 +84,9 @@ const LoginPage = () => {
                 placeholder="이메일을 입력하세요"
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.email.message}
+                </p>
               )}
             </div>
             <div>
@@ -102,12 +104,16 @@ const LoginPage = () => {
                     ? 'border-red-300'
                     : 'border-gray-300 dark:border-gray-600'
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
-                  errors.password ? 'focus:ring-red-500 focus:border-red-500' : ''
+                  errors.password
+                    ? 'focus:ring-red-500 focus:border-red-500'
+                    : ''
                 }`}
                 placeholder="비밀번호를 입력하세요"
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.password.message}
+                </p>
               )}
             </div>
           </div>
@@ -124,7 +130,10 @@ const LoginPage = () => {
 
           <div className="text-center text-sm text-gray-600 dark:text-gray-300">
             계정이 없으신가요?{' '}
-            <Link to="/register" className="font-medium text-primary-main hover:text-primary-dark">
+            <Link
+              to="/register"
+              className="font-medium text-primary-main hover:text-primary-dark"
+            >
               회원가입
             </Link>
           </div>
