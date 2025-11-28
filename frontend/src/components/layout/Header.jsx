@@ -18,7 +18,7 @@ const Header = () => {
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (isUserMenuOpen && !event.target.closest('#user-menu-button')) {
+      if (isUserMenuOpen && !event.target.closest('.user-menu-container')) {
         setIsUserMenuOpen(false);
       }
     };
@@ -75,7 +75,7 @@ const Header = () => {
 
             {/* User Menu */}
             {user && (
-              <div className="ml-4 relative hidden md:block">
+              <div className="ml-4 relative hidden md:block user-menu-container">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center text-sm focus:outline-none text-text-primary dark:text-dark-text hover:text-primary-main dark:hover:text-primary-main"
