@@ -33,7 +33,14 @@
       "Bash(\"C:/Program Files/PostgreSQL/15/bin/psql\" -U postgres -d whs_todolist -c \"SELECT holiday_id, title, date, description FROM holidays ORDER BY date;\")",
       "Bash(\"C:/Program Files/PostgreSQL/15/bin/psql\" -U postgres -d whs_todolist -c \"\nDELETE FROM holidays WHERE date IN (\n  ''2025-01-02'',  -- 신정 중복\n  ''2025-01-29'',  -- 설날 연휴 중복\n  ''2025-01-30'',  -- 설날 중복\n  ''2025-01-31'',  -- 설날 연휴 중복\n  ''2025-03-02'',  -- 삼일절 중복\n  ''2025-05-06'',  -- 어린이날/부처님오신날 중복\n  ''2025-06-07'',  -- 현충일 중복\n  ''2025-08-16'',  -- 광복절 중복\n  ''2025-10-04'',  -- 개천절 중복\n  ''2025-10-06'',  -- 추석 연휴 중복\n  ''2025-10-07'',  -- 추석 중복\n  ''2025-10-08'',  -- 추석 연휴 중복\n  ''2025-10-10'',  -- 한글날 중복\n  ''2025-12-26''   -- 성탄절 중복\n);\nDELETE FROM holidays WHERE title = ''휴일1'';\n\")",
       "Bash(\"C:/Program Files/PostgreSQL/15/bin/psql\":*)",
-      "Bash(\"C:/Program Files/PostgreSQL/15/bin/psql\" -U postgres -d whs_todolist -c \"SELECT holiday_id, title, date, description FROM holidays ORDER BY date LIMIT 20;\")"
+      "Bash(\"C:/Program Files/PostgreSQL/15/bin/psql\" -U postgres -d whs_todolist -c \"SELECT holiday_id, title, date, description FROM holidays ORDER BY date LIMIT 20;\")",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__fill_form",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot"
     ],
     "deny": [],
     "ask": []
