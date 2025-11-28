@@ -1,0 +1,93 @@
+{
+  "common": {
+    "whsTodolist": "WHS-TodoList",
+    "email": "이메일",
+    "password": "비밀번호",
+    "passwordConfirm": "비밀번호 확인",
+    "username": "사용자 이름",
+    "cancel": "취소",
+    "save": "저장",
+    "edit": "수정",
+    "delete": "삭제",
+    "complete": "완료",
+    "incomplete": "미완료",
+    "logout": "로그아웃",
+    "profile": "프로필"
+  },
+  "login": {
+    "title": "로그인",
+    "emailPlaceholder": "이메일",
+    "passwordPlaceholder": "비밀번호",
+    "loginButton": "로그인",
+    "logining": "로그인 중...",
+    "noAccount": "계정이 없으신가요?",
+    "registerLink": "회원가입",
+    "errors": {
+      "invalidEmail": "유효한 이메일 주소를 입력해주세요",
+      "passwordRequired": "비밀번호를 입력해주세요"
+    }
+  },
+  "register": {
+    "title": "회원가입",
+    "emailPlaceholder": "이메일",
+    "usernamePlaceholder": "사용자 이름",
+    "passwordPlaceholder": "비밀번호 (최소 8자)",
+    "passwordConfirmPlaceholder": "비필번호 확인",
+    "registerButton": "회원가입",
+    "registering": "회원가입 중...",
+    "hasAccount": "이미 계정이 있으신가요?",
+    "loginLink": "로그인",
+    "errors": {
+      "invalidEmail": "유효한 이메일 주소를 입력해주세요",
+      "usernameMinLength": "사용자 이름은 최소 2자 이상이어야 합니다",
+      "passwordMinLength": "비밀번호는 최소 8자 이상이어야 합니다",
+      "passwordConfirmRequired": "비밀번호 확인을 입력해주세요",
+      "passwordMismatch": "비밀번호가 일치하지 않습니다"
+    }
+  },
+  "todoList": {
+    "pageTitle": "나의 할일 목록",
+    "addTodo": "할일 추가",
+    "filters": {
+      "all": "전체",
+      "active": "진행중",
+      "completed": "완료"
+    },
+    "searchPlaceholder": "할일 검색",
+    "sortBy": "정렬:",
+    "sortOptions": {
+      "dueDate": "만료일",
+      "createdAt": "생성일"
+    },
+    "noTodos": {
+      "title": "할일이 없습니다",
+      "description": "첫 할일을 추가해보세요!"
+    },
+    "form": {
+      "title": "할일 추가",
+      "editTitle": "할일 수정",
+      "titleLabel": "제목 *",
+      "titleLabelPlaceholder": "할일 제목 입력",
+      "contentLabel": "내용",
+      "contentPlaceholder": "할일 내용 입력 (선택)",
+      "startDateLabel": "시작일",
+      "dueDateLabel": "만료일"
+    }
+  },
+  "header": {
+    "todos": "할일",
+    "trash": "휴지통",
+    "holidays": "국경일",
+    "toggleDarkMode": "다크 모드로 전환",
+    "toggleLightMode": "라이트 모드로 전환"
+  },
+  "todoCard": {
+    "dueDate": "만료일",
+    "startDate": "시작일"
+  },
+  "date": {
+    "startDate": "시작일",
+    "dueDate": "만료일",
+    "dateFromTo": "~"
+  }
+}

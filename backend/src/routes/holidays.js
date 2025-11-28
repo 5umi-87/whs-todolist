@@ -67,13 +67,160 @@ const holidayQueryValidation = [
     .withMessage('Month must be between 1 and 12')
 ];
 
-// GET /api/holidays - Get all holidays with optional year/month filtering
+/**
+ * @swagger
+ * tags:
+ *   name: Holidays
+ *   description: API for managing holidays
+ */
+
+/**
+ * @swagger
+ * /api/holidays:
+ *   get:
+ *     summary: Get all holidays with optional year/month filtering
+ *     tags: [Holidays]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: year
+ *         schema:
+ *           type: integer
+ *           example: 2023
+ *         description: Filter holidays by year
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: integer
+ *           example: 12
+ *           minimum: 1
+ *           maximum: 12
+ *         description: Filter holidays by month (1-12)
+ *     responses:
+ *       200:
+ *         description: List of holidays retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Holiday'
+ *       500:
+ *         description: Server error
+ */
 router.get('/', auth, holidayQueryValidation, getHolidays);
 
-// POST /api/holidays - Create a new holiday (admin only)
+/**
+ * @swagger
+ * /api/holidays:
+ *   post:
+ *     summary: Create a new holiday (admin only)
+ *     tags: [Holidays]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "New Year's Day"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-01-01"
+ *               description:
+ *                 type: string
+ *                 example: "New Year's Day celebration"
+ *               isRecurring:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       201:
+ *         description: Holiday created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Holiday'
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Server error
+ */
 router.post('/', auth, createHolidayValidation, createHoliday);
 
-// PUT /api/holidays/:id - Update a holiday (admin only)
+/**
+ * @swagger
+ * /api/holidays/{id}:
+ *   put:
+ *     summary: Update a holiday (admin only)
+ *     tags: [Holidays]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         description: Holiday ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "New Year's Day"
+ *               date:
+ *                 type: string
+ *                 format: date
+ *                 example: "2024-01-01"
+ *               description:
+ *                 type: string
+ *                 example: "New Year's Day celebration"
+ *               isRecurring:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Holiday updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/Holiday'
+ *       400:
+ *         description: Validation error
+ *       404:
+ *         description: Holiday not found
+ *       500:
+ *         description: Server error
+ */
 router.put('/:id', auth, holidayIdValidation, updateHolidayValidation, updateHoliday);
 
 module.exports = router;

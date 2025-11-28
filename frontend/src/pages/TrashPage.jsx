@@ -94,46 +94,60 @@ const TrashPage = () => {
             todos.map((todo) => (
               <div
                 key={todo.todoId}
-                className="border rounded-lg p-4 shadow-sm bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700 opacity-80"
+                className="border rounded-lg p-4 shadow-sm bg-gray-50 dark:bg-gray-800/60 border-gray-200 dark:border-gray-700"
               >
-                <div className="flex items-start">
-                  <div className="ml-3 flex-1 min-w-0">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      {todo.title} <span className="text-xs px-2 py-1 bg-gray-200 text-gray-700 rounded dark:bg-gray-700 dark:text-gray-300">삭제됨</span>
-                    </h3>
-                    {todo.content && (
-                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {todo.content}
-                      </p>
-                    )}
-                    {todo.dueDate && (
-                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                        📅 {todo.startDate} ~ {todo.dueDate}
-                      </p>
-                    )}
-                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400 flex items-center">
-                      <Trash2 className="h-3 w-3 mr-1" /> {getRelativeTime(todo.deletedAt)}
-                    </p>
-                    <div className="mt-3 flex space-x-2">
-                      <Button
-                        variant="success"
-                        size="sm"
-                        onClick={() => handleRestore(todo.todoId)}
-                        className="flex items-center"
-                      >
-                        <RotateCcw className="h-4 w-4 mr-1" />
-                        복원
-                      </Button>
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={() => setConfirmDeleteId(todo.todoId)}
-                        className="flex items-center"
-                      >
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        영구삭제
-                      </Button>
+                <div className="flex flex-col h-full">
+                  <div className="flex items-start">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-medium text-gray-900 dark:text-white">
+                        {todo.title}
+                      </h3>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                        삭제됨
+                      </span>
                     </div>
+                  </div>
+
+                  {todo.content && (
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {todo.content}
+                    </p>
+                  )}
+
+                  {(todo.startDate || todo.dueDate) && (
+                    <div className="flex items-center gap-1 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                      <span>📅</span>
+                      <span>
+                        {todo.startDate && todo.dueDate
+                          ? `${todo.startDate} ~ ${todo.dueDate}`
+                          : todo.dueDate || todo.startDate}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1 mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    <Trash2 className="h-3 w-3" /> {getRelativeTime(todo.deletedAt)}
+                  </div>
+
+                  <div className="flex gap-2 mt-auto pt-3 border-t border-gray-200 dark:border-gray-700">
+                    <Button
+                      variant="success"
+                      size="sm"
+                      onClick={() => handleRestore(todo.todoId)}
+                      className="flex items-center text-xs"
+                    >
+                      <RotateCcw className="h-3 w-3 mr-1" />
+                      복원
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => setConfirmDeleteId(todo.todoId)}
+                      className="flex items-center text-xs"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1" />
+                      영구삭제
+                    </Button>
                   </div>
                 </div>
               </div>

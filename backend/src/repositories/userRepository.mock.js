@@ -1,4 +1,6 @@
 // Mock database for testing
+const bcrypt = require('bcrypt');
+
 let users = [];
 
 // Generate a random UUID for testing
@@ -20,10 +22,13 @@ const userRepository = {
       throw error;
     }
 
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+
     const newUser = {
       user_id: generateUUID(),
       email: userData.email,
-      password: userData.password, // In real implementation, this would be hashed
+      password: hashedPassword,
       username: userData.username,
       role: 'user',
       created_at: new Date().toISOString(),
@@ -35,23 +40,23 @@ const userRepository = {
     // Map the database field names (snake_case) to API field names (camelCase)
     const { password, ...userWithoutPassword } = newUser;
     return {
-      userId: userWithoutPassword.user_id,
+      user_id: userWithoutPassword.user_id,
       email: userWithoutPassword.email,
       username: userWithoutPassword.username,
       role: userWithoutPassword.role,
-      createdAt: userWithoutPassword.created_at,
-      updatedAt: userWithoutPassword.updated_at
+      created_at: userWithoutPassword.created_at,
+      updated_at: userWithoutPassword.updated_at
     };
   },
 
   findUserByEmail: async (email) => {
     const user = users.find(user => user.email === email) || null;
     if (user) {
-      // Map the database field names (snake_case) to API field names (camelCase)
+      // Return the full user object with password for authentication
       return {
-        userId: user.user_id,
+        user_id: user.user_id,
         email: user.email,
-        password: user.password,
+        password: user.password, // This should be the hashed password
         username: user.username,
         role: user.role,
         created_at: user.created_at,
@@ -64,14 +69,14 @@ const userRepository = {
   findUserById: async (userId) => {
     const user = users.find(user => user.user_id === userId) || null;
     if (user) {
-      // Map the database field names (snake_case) to API field names (camelCase)
+      // Return the user object without password for profile endpoints
       return {
-        userId: user.user_id,
+        user_id: user.user_id,
         email: user.email,
         username: user.username,
         role: user.role,
-        createdAt: user.created_at,
-        updatedAt: user.updated_at
+        created_at: user.created_at,
+        updated_at: user.updated_at
       };
     }
     return null;
@@ -88,7 +93,8 @@ const userRepository = {
     }
 
     if (updateData.password) {
-      users[userIndex].password = updateData.password; // In real implementation, this would be hashed
+      // Hash the new password
+      users[userIndex].password = await bcrypt.hash(updateData.password, 10);
     }
 
     users[userIndex].updated_at = new Date().toISOString();
@@ -97,12 +103,12 @@ const userRepository = {
     const updatedUser = { ...users[userIndex] };
     const { password, ...userWithoutPassword } = updatedUser;
     return {
-      userId: userWithoutPassword.user_id,
+      user_id: userWithoutPassword.user_id,
       email: userWithoutPassword.email,
       username: userWithoutPassword.username,
       role: userWithoutPassword.role,
-      createdAt: userWithoutPassword.created_at,
-      updatedAt: userWithoutPassword.updated_at
+      created_at: userWithoutPassword.created_at,
+      updated_at: userWithoutPassword.updated_at
     };
   }
 };

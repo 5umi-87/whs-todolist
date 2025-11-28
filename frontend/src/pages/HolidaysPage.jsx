@@ -56,25 +56,27 @@ const HolidaysPage = () => {
             holidays.map((holiday) => (
               <div
                 key={holiday.holidayId}
-                className="border rounded-lg p-4 shadow-sm bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-700"
+                className="border rounded-lg p-4 shadow-sm bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-700 h-full flex flex-col"
               >
-                <div className="text-center">
-                  <h3 className="text-lg font-medium text-red-700 dark:text-red-300">
+                <div className="text-center flex-1">
+                  <div className="text-xl font-medium text-red-700 dark:text-red-300">
+                    {holiday.date}
+                  </div>
+                  <h3 className="text-lg font-medium text-red-700 dark:text-red-300 mt-2">
                     {holiday.title} 🎊
                   </h3>
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                     {holiday.description}
                   </p>
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-400">
-                    📅 {holiday.date}
-                  </p>
-                  <div className="mt-2">
-                    {holiday.isRecurring && (
-                      <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full">
+                </div>
+                <div className="mt-auto pt-3">
+                  {holiday.isRecurring && (
+                    <div className="text-center">
+                      <span className="text-xs px-2 py-1 bg-red-100 text-red-800 rounded-full dark:bg-red-900/30 dark:text-red-300">
                         매년 반복
                       </span>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             ))

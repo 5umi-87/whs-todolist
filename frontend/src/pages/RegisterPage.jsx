@@ -7,15 +7,15 @@ import { useAuthStore } from '../stores/authStore';
 
 // Define validation schema using zod
 const registerSchema = z.object({
-  email: z.string().email('유효한 이메일 주소를 입력해주세요'),
-  username: z.string().min(2, '사용자 이름은 최소 2자 이상이어야 합니다'),
-  password: z.string().min(8, '비밀번호는 최소 8자 이상이어야 합니다'),
+  email: z.string().email('올바른 이메일 형식이 아닙니다'),
+  username: z.string().min(2, '이름은 2자 이상이어야 합니다'),
+  password: z.string().min(8, '비밀번호는 8자 이상이어야 합니다'),
   confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요'),
 })
 // Add custom validation to ensure passwords match
 .refine(data => data.password === data.confirmPassword, {
-  message: "비밀번호가 일치하지 않습니다",
-  path: ["confirmPassword"], // field that error is associated with
+  message: '비밀번호가 일치하지 않습니다',
+  path: ["confirmPassword"],
 });
 
 const RegisterPage = () => {
@@ -90,7 +90,7 @@ const RegisterPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-t-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.email ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="이메일"
+                placeholder="이메일을 입력하세요"
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -98,7 +98,7 @@ const RegisterPage = () => {
             </div>
             <div>
               <label htmlFor="username" className="sr-only">
-                사용자 이름
+                이름
               </label>
               <input
                 id="username"
@@ -112,7 +112,7 @@ const RegisterPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.username ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="사용자 이름"
+                placeholder="이름을 입력하세요"
               />
               {errors.username && (
                 <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
@@ -135,7 +135,7 @@ const RegisterPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.password ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="비밀번호 (최소 8자)"
+                placeholder="비밀번호를 입력하세요 (8자 이상)"
               />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
@@ -158,7 +158,7 @@ const RegisterPage = () => {
                 } placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-primary-main focus:border-primary-main focus:z-10 sm:text-sm bg-white dark:bg-gray-800 ${
                   errors.confirmPassword ? 'focus:ring-red-500 focus:border-red-500' : ''
                 }`}
-                placeholder="비밀번호 확인"
+                placeholder="비밀번호를 다시 입력하세요"
               />
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600">{errors.confirmPassword.message}</p>
@@ -172,7 +172,7 @@ const RegisterPage = () => {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-main hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-main disabled:opacity-50"
             >
-              {isLoading ? '회원가입 중...' : '회원가입'}
+              {isLoading ? '가입 중...' : '회원가입'}
             </button>
           </div>
 

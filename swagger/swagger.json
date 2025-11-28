@@ -11,12 +11,12 @@
   },
   "servers": [
     {
-      "url": "https://your-domain.vercel.app/api",
-      "description": "Production server"
+      "url": "http://localhost:3001/api",
+      "description": "Development server"
     },
     {
-      "url": "http://localhost:3000/api",
-      "description": "Development server"
+      "url": "https://your-domain.vercel.app/api",
+      "description": "Production server"
     }
   ],
   "tags": [
@@ -147,8 +147,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean", "example": true},
-                    "message": {"type": "string", "example": "로그아웃 되었습니다"}
+                    "success": { "type": "boolean", "example": true },
+                    "message": {
+                      "type": "string",
+                      "example": "로그아웃 되었습니다"
+                    }
                   }
                 }
               }
@@ -164,10 +167,25 @@
         "operationId": "getTodos",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["active", "completed", "deleted"] } },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "completed", "deleted"]
+            }
+          },
           { "name": "search", "in": "query", "schema": { "type": "string" } },
-          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["dueDate", "createdAt"] } },
-          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] } }
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["dueDate", "createdAt"] }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["asc", "desc"] }
+          }
         ],
         "responses": {
           "200": {
@@ -177,7 +195,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean", "example": true},
+                    "success": { "type": "boolean", "example": true },
                     "data": {
                       "type": "array",
                       "items": { "$ref": "#/components/schemas/Todo" }
@@ -206,7 +224,9 @@
           "201": {
             "description": "Todo created successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TodoResponse" }
+              }
             }
           },
           "400": { "$ref": "#/components/responses/BadRequest" }
@@ -220,13 +240,20 @@
         "operationId": "getTodoById",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "responses": {
           "200": {
             "description": "Detailed information for a todo",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TodoResponse" }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" },
@@ -239,7 +266,12 @@
         "operationId": "updateTodo",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -253,7 +285,9 @@
           "200": {
             "description": "Todo updated successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TodoResponse" }
+              }
             }
           },
           "400": { "$ref": "#/components/responses/BadRequest" },
@@ -267,13 +301,22 @@
         "operationId": "deleteTodo",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "responses": {
           "200": {
             "description": "Todo moved to trash",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoSoftDeleteResponse" } }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoSoftDeleteResponse"
+                }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" },
@@ -288,13 +331,20 @@
         "operationId": "completeTodo",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "responses": {
           "200": {
             "description": "Todo marked as complete",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoStatusResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TodoStatusResponse" }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" },
@@ -309,13 +359,20 @@
         "operationId": "restoreTodo",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "responses": {
           "200": {
             "description": "Todo restored successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/TodoRestoreResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/TodoRestoreResponse" }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" },
@@ -330,9 +387,27 @@
         "operationId": "getTrashItems",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "search", "in": "query", "schema": { "type": "string" }, "description": "Search by title or content" },
-          { "name": "sortBy", "in": "query", "schema": { "type": "string", "enum": ["deletedAt", "dueDate", "createdAt"] }, "description": "Sort by field" },
-          { "name": "order", "in": "query", "schema": { "type": "string", "enum": ["asc", "desc"] }, "description": "Sort order" }
+          {
+            "name": "search",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Search by title or content"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["deletedAt", "dueDate", "createdAt"]
+            },
+            "description": "Sort by field"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["asc", "desc"] },
+            "description": "Sort order"
+          }
         ],
         "responses": {
           "200": {
@@ -342,7 +417,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean", "example": true},
+                    "success": { "type": "boolean", "example": true },
                     "data": {
                       "type": "array",
                       "items": { "$ref": "#/components/schemas/Todo" }
@@ -362,7 +437,12 @@
         "operationId": "permanentlyDeleteTodo",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "responses": {
           "200": {
@@ -372,8 +452,11 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean", "example": true},
-                    "message": {"type": "string", "example": "할일이 영구적으로 삭제되었습니다"}
+                    "success": { "type": "boolean", "example": true },
+                    "message": {
+                      "type": "string",
+                      "example": "할일이 영구적으로 삭제되었습니다"
+                    }
                   }
                 }
               }
@@ -403,7 +486,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "success": {"type": "boolean", "example": true},
+                    "success": { "type": "boolean", "example": true },
                     "data": {
                       "type": "array",
                       "items": { "$ref": "#/components/schemas/Holiday" }
@@ -432,7 +515,9 @@
           "201": {
             "description": "Holiday created successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/HolidayResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HolidayResponse" }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" }
@@ -446,7 +531,12 @@
         "operationId": "updateHoliday",
         "security": [{ "bearerAuth": [] }],
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
         ],
         "requestBody": {
           "required": true,
@@ -460,7 +550,9 @@
           "200": {
             "description": "Holiday updated successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/HolidayResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HolidayResponse" }
+              }
             }
           },
           "403": { "$ref": "#/components/responses/Forbidden" }
@@ -477,7 +569,9 @@
           "200": {
             "description": "Current user's profile data",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/UserProfileResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserProfileResponse" }
+              }
             }
           }
         }
@@ -498,7 +592,9 @@
           "200": {
             "description": "User profile updated successfully",
             "content": {
-              "application/json": { "schema": { "$ref": "#/components/schemas/UserUpdateResponse" } }
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserUpdateResponse" }
+              }
             }
           }
         }
@@ -532,11 +628,18 @@
           "content": { "type": "string", "nullable": true },
           "startDate": { "type": "string", "format": "date", "nullable": true },
           "dueDate": { "type": "string", "format": "date", "nullable": true },
-          "status": { "type": "string", "enum": ["active", "completed", "deleted"] },
+          "status": {
+            "type": "string",
+            "enum": ["active", "completed", "deleted"]
+          },
           "isCompleted": { "type": "boolean" },
           "createdAt": { "type": "string", "format": "date-time" },
           "updatedAt": { "type": "string", "format": "date-time" },
-          "deletedAt": { "type": "string", "format": "date-time", "nullable": true }
+          "deletedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
         }
       },
       "Holiday": {
@@ -553,8 +656,16 @@
         "type": "object",
         "required": ["email", "password", "username"],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "password": { "type": "string", "format": "password", "example": "password123" },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          },
           "username": { "type": "string", "example": "홍길동" }
         }
       },
@@ -562,8 +673,16 @@
         "type": "object",
         "required": ["email", "password"],
         "properties": {
-          "email": { "type": "string", "format": "email", "example": "user@example.com" },
-          "password": { "type": "string", "format": "password", "example": "password123" }
+          "email": {
+            "type": "string",
+            "format": "email",
+            "example": "user@example.com"
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "example": "password123"
+          }
         }
       },
       "RefreshRequest": {
@@ -579,8 +698,16 @@
         "properties": {
           "title": { "type": "string", "example": "프로젝트 마감" },
           "content": { "type": "string", "example": "PRD 작성 완료하기" },
-          "startDate": { "type": "string", "format": "date", "example": "2025-11-25" },
-          "dueDate": { "type": "string", "format": "date", "example": "2025-11-28" }
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-11-25"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-11-28"
+          }
         }
       },
       "UpdateTodoRequest": {
@@ -597,8 +724,15 @@
         "required": ["title", "date"],
         "properties": {
           "title": { "type": "string", "example": "광복절" },
-          "date": { "type": "string", "format": "date", "example": "2025-08-15" },
-          "description": { "type": "string", "example": "대한민국 독립 기념일" },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "example": "2025-08-15"
+          },
+          "description": {
+            "type": "string",
+            "example": "대한민국 독립 기념일"
+          },
           "isRecurring": { "type": "boolean", "example": true }
         }
       },
@@ -621,14 +755,14 @@
       "UserResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": { "$ref": "#/components/schemas/User" }
         }
       },
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "object",
             "properties": {
@@ -642,7 +776,7 @@
       "RefreshResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "object",
             "properties": {
@@ -654,14 +788,14 @@
       "TodoResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": { "$ref": "#/components/schemas/Todo" }
         }
       },
       "TodoStatusResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "object",
             "properties": {
@@ -675,8 +809,8 @@
       "TodoSoftDeleteResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
-          "message": {"type": "string"},
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string" },
           "data": {
             "type": "object",
             "properties": {
@@ -690,8 +824,8 @@
       "TodoRestoreResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
-          "message": {"type": "string"},
+          "success": { "type": "boolean", "example": true },
+          "message": { "type": "string" },
           "data": {
             "type": "object",
             "properties": {
@@ -705,14 +839,14 @@
       "HolidayResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": { "$ref": "#/components/schemas/Holiday" }
         }
       },
       "UserProfileResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "object",
             "properties": {
@@ -728,7 +862,7 @@
       "UserUpdateResponse": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": true},
+          "success": { "type": "boolean", "example": true },
           "data": {
             "type": "object",
             "properties": {
@@ -741,7 +875,7 @@
       "Error": {
         "type": "object",
         "properties": {
-          "success": {"type": "boolean", "example": false},
+          "success": { "type": "boolean", "example": false },
           "error": {
             "type": "object",
             "properties": {
@@ -755,27 +889,51 @@
     "responses": {
       "BadRequest": {
         "description": "Bad Request - Invalid input",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       },
       "Unauthorized": {
         "description": "Unauthorized - Invalid or missing token",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       },
       "Forbidden": {
         "description": "Forbidden - Insufficient permissions",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       },
       "NotFound": {
         "description": "Not Found - Resource not found",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       },
       "Conflict": {
         "description": "Conflict - Resource already exists",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       },
       "InternalError": {
         "description": "Internal Server Error",
-        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+        "content": {
+          "application/json": {
+            "schema": { "$ref": "#/components/schemas/Error" }
+          }
+        }
       }
     }
   }

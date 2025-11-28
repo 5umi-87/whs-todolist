@@ -14,20 +14,20 @@ const Input = ({
   className = '', 
   ...props 
 }) => {
-  const baseClasses = 'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-main focus:border-primary-main sm:text-sm';
-  
-  const variantClasses = error 
-    ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500' 
-    : 'border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-primary-main focus:border-primary-main';
-  
-  const disabledClass = disabled ? 'bg-gray-100 dark:bg-gray-700 cursor-not-allowed' : '';
+  const baseClasses = 'block w-full px-3 py-2 border rounded shadow-sm focus:outline-none focus:ring-2 sm:text-sm transition-colors';
+
+  const variantClasses = error
+    ? 'border-status-overdue text-status-overdue placeholder-red-300 focus:ring-status-overdue focus:border-status-overdue'
+    : 'border-border-gray dark:border-gray-600 text-text-primary dark:text-dark-text placeholder-text-secondary dark:placeholder-dark-textSecondary focus:ring-active-blue focus:border-active-blue bg-background-white dark:bg-dark-surface';
+
+  const disabledClass = disabled ? 'bg-background-gray dark:bg-gray-700 cursor-not-allowed' : '';
   const inputClasses = `${baseClasses} ${variantClasses} ${disabledClass} ${className}`;
 
   return (
     <div>
       {label && (
-        <label htmlFor={id} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-          {label} {required && <span className="text-red-500">*</span>}
+        <label htmlFor={id} className="block text-sm font-medium text-text-primary dark:text-dark-text mb-1">
+          {label} {required && <span className="text-status-overdue">*</span>}
         </label>
       )}
       <input
@@ -43,7 +43,7 @@ const Input = ({
         {...props}
       />
       {error && (
-        <p className="mt-1 text-sm text-red-600">{error}</p>
+        <p className="mt-1 text-sm text-status-overdue">{error}</p>
       )}
     </div>
   );
@@ -51,7 +51,7 @@ const Input = ({
 
 Input.propTypes = {
   label: PropTypes.string,
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
   type: PropTypes.string,
   placeholder: PropTypes.string,
   value: PropTypes.any,
